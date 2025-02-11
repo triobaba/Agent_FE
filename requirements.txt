@@ -1,3 +1,4 @@
-flask
-transformers
-torch
+Flask
+gunicorn
+requests
+python-dotenv
