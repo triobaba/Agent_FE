@@ -13,13 +13,11 @@
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
       crossorigin="anonymous"
     />
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
       crossorigin="anonymous"
     />
     <link
@@ -38,14 +36,15 @@
               <div class="d-flex bd-highlight">
                 <div class="img_cont">
                   <img
-                    src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png"
+                    src="{{ url_for('static', filename='naraapp_logo.jpeg') }}"
                     class="rounded-circle user_img"
+                    alt="NaraTherapy Logo"
                   />
                   <span class="online_icon"></span>
                 </div>
                 <div class="user_info">
                   <span>NaraTherapy</span>
-                  <p>Your Mental Healh is priority!</p>
+                  <p>Your Mental Health is priority!</p>
                 </div>
               </div>
             </div>
@@ -84,7 +83,7 @@
       }
 
       $(document).ready(function () {
-        const API_BASE_URL = "https://react-agent-3.onrender.com" // Replace with your Render deployment UR
+        const API_BASE_URL = "https://react-agent-3.onrender.com"; // Replace with your API URL
         let token = null;
         let thread_id = null;
 
@@ -107,7 +106,7 @@
           const date = new Date();
           const hour = date.getHours();
           const minute = date.getMinutes();
-          const str_time = hour + ":" + minute;
+          const str_time = hour + ":" + (minute < 10 ? "0" + minute : minute);
           const rawText = $("#text").val();
 
           const userHtml = `
@@ -139,6 +138,10 @@
             contentType: "application/json",
             data: JSON.stringify({ message: rawText }),
             success: function (data) {
+              let formattedResponse = data.response
+                .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Convert **bold text** to <b> tags
+                .replace(/\n/g, "<br>"); // Convert newlines to <br> tags
+
               const botHtml = `
                 <div class="d-flex justify-content-start mb-4">
                   <div class="img_cont_msg">
@@ -148,11 +151,12 @@
                     />
                   </div>
                   <div class="msg_cotainer">
-                    ${data.response}
+                    ${formattedResponse}
                     <span class="msg_time">${str_time}</span>
                   </div>
                 </div>
               `;
+
               $("#messageFormeight").append($.parseHTML(botHtml));
               scrollToBottom();
             },
